@@ -1,5 +1,5 @@
 #include <iostream>
-
+#include <iomanip>
 using namespace std;
 
 // Clasifica un char: 'v' vocal, 'c' consonante, 'f' no es letra
@@ -217,7 +217,7 @@ void problema_11(){
     cout<<"El minimo comun multiplo es: "<<res<<endl;
 }
 
-// Prueba de primalidad por division (O(n), no optimizada)
+// Prueba de primalidad por division (O(n),
 bool es_primo(int n){
     for (int i=2;i<n;i+=1){
         if(n%i==0){
@@ -240,9 +240,13 @@ void problema_13(){
 
 }
 
+
+
 // Suma los numeros de la diagonal de una espiral cuadrada de lado n (recorre anillo por anillo)
 int espiral(int n){
-    if (n == 1) return 1;
+    if (n == 1) {
+        return 1;
+    }
     int cunt=(n*n)+(-n+1), cont=n*n,nus=n-1 ;
     while(true){
         for (int i=1;i<=4;i+=1){ // los 4 vertices del anillo actual
@@ -260,14 +264,68 @@ int espiral(int n){
         }
     }
 }
+
+// Valor absoluto manual
+int abs_manual(int x){
+    if (x < 0) return -x;
+    return x;
+}
+
+int valorCelda(int fila, int col, int n){
+    int c = n/2;                        // indice del centro
+    int df = fila - c;              // distancia de la fila al centro (negativo = arriba, positivo = abajo)
+    int dc = col - c;               // distancia de la columna al centro (negativo = izquierda, positivo = derecha)
+
+    int anillo = abs_manual(df);        // anillo = capa a la que pertenece
+
+    if (abs_manual(dc) > anillo) {
+        anillo = abs_manual(dc);        // anillo = max(|df|,|dc|)
+    }
+
+    if (anillo == 0) {
+        return 1;                       // caso especial: el centro
+    }
+
+    int ladoAnillo = 2*anillo;          // numeros por lado del anillo
+
+    int primerDelAnillo = (2*anillo - 1)*(2*anillo - 1) + 1;  // primer numero del anillo
+
+    if (dc == anillo && df > -anillo && df < anillo){         // ¿lado derecho?
+        int offset = df + anillo - 1;   // avance dentro del lado derecho
+        return primerDelAnillo + offset;
+    }
+
+    if (df == anillo && dc <= anillo && dc > -anillo){        // ¿lado de abajo?
+        int offset = ladoAnillo + (anillo - dc) - 1;          // +1 lado ya recorrido
+        return primerDelAnillo + offset;
+    }
+
+    if (dc == -anillo && df <= anillo && df > -anillo){       // ¿lado izquierdo?
+        int offset = 2*ladoAnillo + (anillo - df) - 1;        // +2 lados ya recorridos
+        return primerDelAnillo + offset;
+    }
+
+    int offset = 3*ladoAnillo + (anillo + dc) - 1;            // lado de arriba (por descarte)
+    return primerDelAnillo + offset;                          // +3 lados ya recorridos
+}
+
+void imprimir_espiral(int n){
+    for (int fila = 0; fila < n; fila++){       // recorre filas
+        for (int col = 0; col < n; col++){      // recorre columnas
+            cout << setw(4) << valorCelda(fila, col, n);   // calcula e imprime, ancho fijo
+        }
+        cout << endl;                           // salto de linea por fila
+    }
+}
+
 void problema_15(){
     int n,rest;
     cout<<" Escriba un numero impar para calcular la suma de los numeros en la diagonal"<< endl;
     cin>>n;
     rest =espiral(n);
     cout<<"La suma de su diagonal es: "<<rest<<endl;
+    imprimir_espiral(n);
 }
-
 // Busca el primer numero triangular (1, 3, 6, 10...) con mas divisores que n
 void triangular(int n, int list[]){
     int divi=0,pos=0,num;
@@ -285,6 +343,7 @@ void triangular(int n, int list[]){
     list[1]=divi;  // su cantidad de divisores
 
 }
+
 void problema_17(){
     int n;
     int list[2];
@@ -294,6 +353,7 @@ void problema_17(){
     cout<<"El numero es: "<<list[0]<< " que tiene: "<<list[1]<<" divisores"<<endl;
 
 }
+
 
 // Menu principal: enruta al problema segun el numero ingresado
 int main(){
